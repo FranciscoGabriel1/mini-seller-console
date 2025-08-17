@@ -1,0 +1,5 @@
+[
+  { "id": "l-1", "name": "Alice Johnson", "company": "Acme Inc.", "email": "alice@acme.com", "source": "Website", "score": 82, "status": "new" },
+  { "id": "l-2", "name": "Bruno Lima", "company": "Beta Corp", "email": "bruno@beta.com", "source": "Referral", "score": 65, "status": "contacted" },
+  { "id": "l-3", "name": "Carla Souza", "company": "Gamma LLC", "email": "carla@gamma.com", "source": "Event", "score": 91, "status": "qualified" }
+]

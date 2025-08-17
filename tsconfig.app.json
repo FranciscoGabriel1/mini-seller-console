@@ -18,7 +18,8 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-    "types": ["vitest/globals", "vite/client"]
+    "types": ["vitest/globals", "vite/client"],
+    "resolveJsonModule": true
   },
   "include": ["src", "src/**/*.test.ts", "src/**/*.test.tsx", "src/setupTests.ts"]
 }
