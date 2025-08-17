@@ -2,6 +2,9 @@
 
 @layer base {
   html, body, #root { height: 100%; }
-  /* opcional: cor de fundo para validar visualmente */
-  body { @apply bg-red-50 text-red-900 antialiased; }
+
+  /* Neutral light theme by default */
+  :root { color-scheme: light; }
+
+  body { @apply bg-gray-50 text-gray-900 antialiased; }
 }
