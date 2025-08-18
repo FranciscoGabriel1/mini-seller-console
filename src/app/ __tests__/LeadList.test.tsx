@@ -1,9 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from "vitest"
-import { render, screen, fireEvent, within } from "@testing-library/react" 
+import { render, screen, fireEvent, within } from "@testing-library/react"
 import { ServicesCtx } from "../../app/contexts/services-context"
 import type { Services } from "../../features/ports"
 import type { Lead } from "../../features/leads/types"
-
 
 vi.mock("../../features/leads/hooks/useLeads", () => ({
   useLeads: vi.fn(),
@@ -13,7 +12,7 @@ vi.mock("../../features/opportunities/hooks/useOpportunities", () => ({
   useOpportunities: vi.fn(() => ({ addOpportunity: vi.fn() })),
 }))
 
-import { useLeads } from "../../features/leads/hooks/useLeads"
+import { useLeads } from "../../features/leads/hooks/useLeads" // importar após vi.mock
 import { LeadList } from "../../components/LeadList"
 
 const servicesMock: Services = {
@@ -51,14 +50,17 @@ describe("<LeadList />", () => {
       </ServicesCtx.Provider>
     )
 
-    expect(screen.getByText("Name")).toBeInTheDocument()
-    expect(screen.getByText("Company")).toBeInTheDocument()
-    expect(screen.getByText("Status")).toBeInTheDocument()
-    expect(screen.getByText("Score")).toBeInTheDocument()
+    const table = screen.getByRole("table")
+    const t = within(table)
 
-    expect(screen.getByText("Alice Johnson")).toBeInTheDocument()
-    expect(screen.getByText("Bruno Lima")).toBeInTheDocument()
-    expect(screen.getByText("Carla Souza")).toBeInTheDocument()
+    expect(t.getByText("Name")).toBeInTheDocument()
+    expect(t.getByText("Company")).toBeInTheDocument()
+    expect(t.getByText("Status")).toBeInTheDocument()
+    expect(t.getByText("Score")).toBeInTheDocument()
+
+    expect(t.getByText("Alice Johnson")).toBeInTheDocument()
+    expect(t.getByText("Bruno Lima")).toBeInTheDocument()
+    expect(t.getByText("Carla Souza")).toBeInTheDocument()
   })
 
   it("filters by search (name/company)", () => {
@@ -77,47 +79,54 @@ describe("<LeadList />", () => {
       </ServicesCtx.Provider>
     )
 
+    const table = screen.getByRole("table")
+    const t = within(table)
+
     const searchInput = screen.getByPlaceholderText(/search by name\/company/i)
     fireEvent.change(searchInput, { target: { value: "acme" } })
 
-    expect(screen.getByText("Alice Johnson")).toBeInTheDocument()
-    expect(screen.queryByText("Bruno Lima")).not.toBeInTheDocument()
-    expect(screen.queryByText("Carla Souza")).not.toBeInTheDocument()
+    expect(t.getByText("Alice Johnson")).toBeInTheDocument()
+    expect(t.queryByText("Bruno Lima")).not.toBeInTheDocument()
+    expect(t.queryByText("Carla Souza")).not.toBeInTheDocument()
   })
 
-it("allows inline score edit and calls updateLead with new score", async () => {
-  const updateLead = vi.fn()
+  it("allows inline score edit and calls updateLead with new score", async () => {
+    const updateLead = vi.fn()
 
-  vi.mocked(useLeads).mockReturnValue({
-    data: sampleLeads,
-    isLoading: false,
-    errorMessage: null,
-    updateLead,
-    reload: vi.fn(),
-    dismissError: vi.fn(),
+    vi.mocked(useLeads).mockReturnValue({
+      data: sampleLeads,
+      isLoading: false,
+      errorMessage: null,
+      updateLead,
+      reload: vi.fn(),
+      dismissError: vi.fn(),
+    })
+
+    render(
+      <ServicesCtx.Provider value={servicesMock}>
+        <LeadList />
+      </ServicesCtx.Provider>
+    )
+
+    const table = screen.getByRole("table")
+    const t = within(table)
+
+    const aliceCell = t.getByText("Alice Johnson")
+    const aliceRow = aliceCell.closest("tr")!
+    const row = within(aliceRow)
+
+    const scoreButton = row.getByRole("button", { name: /edit score/i })
+    fireEvent.click(scoreButton)
+
+    const scoreInput = row.getByRole("textbox", { name: /edit score/i })
+    fireEvent.change(scoreInput, { target: { value: "95" } })
+
+    const saveBtn = row.getByRole("button", { name: /^save$/i })
+    fireEvent.click(saveBtn)
+
+    expect(updateLead).toHaveBeenCalledTimes(1)
+    const arg = updateLead.mock.calls[0][0] as Lead
+    expect(arg.id).toBe("1")
+    expect(arg.score).toBe(95)
   })
-
-  render(
-    <ServicesCtx.Provider value={servicesMock}>
-      <LeadList />
-    </ServicesCtx.Provider>
-  )
-
-  const aliceRow = screen.getByText("Alice Johnson").closest("tr")!
-  const rowQueries = within(aliceRow)
-
-  const scoreButton = rowQueries.getByRole("button", { name: /edit score/i })
-  fireEvent.click(scoreButton)
-
-  const scoreInput = rowQueries.getByRole("textbox", { name: /edit score/i })
-  fireEvent.change(scoreInput, { target: { value: "95" } })
-
-  const saveBtn = rowQueries.getByRole("button", { name: /^save$/i })
-  fireEvent.click(saveBtn)
-
-  expect(updateLead).toHaveBeenCalledTimes(1)
-  const arg = updateLead.mock.calls[0][0]
-  expect(arg.id).toBe("1")
-  expect(arg.score).toBe(95)
-})
 })
