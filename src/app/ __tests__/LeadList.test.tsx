@@ -12,21 +12,21 @@ vi.mock("../../features/opportunities/hooks/useOpportunities", () => ({
   useOpportunities: vi.fn(() => ({ addOpportunity: vi.fn() })),
 }))
 
-import { useLeads } from "../../features/leads/hooks/useLeads" // importar após vi.mock
+import { useLeads } from "../../features/leads/hooks/useLeads"
 import { LeadList } from "../../components/LeadList"
 
 const servicesMock: Services = {
   leads: { list: async () => [], update: async l => l },
-  opps: { add: async o => ({ ...o, id: o.id || "opp_test" }), list: async () => [] },
+  opps: { add: async o => ({ ...o, id: o.id || "opp_test" }), list: async () => [], delete: async () => { /* noop for test */ }, },
   kv: { get: () => null, set: () => void 0 },
   clock: { now: () => Date.now() },
   latency: { wait: async () => void 0 },
 }
 
 const sampleLeads: Lead[] = [
-  { id: "1", name: "Alice Johnson", company: "Acme Inc.",  email: "a@acme.com", source: "web",     score: 90, status: "new" },
-  { id: "2", name: "Bruno Lima",    company: "Beta Corp",  email: "b@beta.com", source: "referral", score: 65, status: "contacted" },
-  { id: "3", name: "Carla Souza",   company: "Gamma LLC",  email: "c@gamma.com", source: "event",   score: 82, status: "qualified" },
+  { id: "1", name: "Alice Johnson", company: "Acme Inc.", email: "a@acme.com", source: "web", score: 90, status: "new" },
+  { id: "2", name: "Bruno Lima", company: "Beta Corp", email: "b@beta.com", source: "referral", score: 65, status: "contacted" },
+  { id: "3", name: "Carla Souza", company: "Gamma LLC", email: "c@gamma.com", source: "event", score: 82, status: "qualified" },
 ]
 
 describe("<LeadList />", () => {

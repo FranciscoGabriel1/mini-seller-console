@@ -11,6 +11,7 @@ const servicesMock: Services = {
   opps: {
     add: async (o) => ({ ...o, id: o.id || "opp_test" }),
     list: async () => [],
+    delete: async () => { /* noop for test */ }, 
   },
   kv: {
     get: () => null,
