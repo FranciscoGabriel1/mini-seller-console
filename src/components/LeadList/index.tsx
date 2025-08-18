@@ -6,10 +6,13 @@ import { LeadDetailPanel } from "../LeadDetailPanel"
 import { filterByStatus, searchLeads, sortByScore } from "../../features/leads/utils"
 import { LeadToolbar } from "../LeadToolbar"
 import { isValidScore } from "../../lib/validators"
+import { useOpportunities } from "../../features/opportunities/hooks/useOpportunities"
+import { emitOppsChanged } from "../../lib/eventBus"
 
 
 export function LeadList(): JSX.Element {
   const { data, isLoading, errorMessage, updateLead } = useLeads()
+  const { addOpportunity } = useOpportunities()
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [selectedStatus, setSelectedStatus] = useState<LeadStatus | undefined>(undefined)
@@ -153,6 +156,23 @@ export function LeadList(): JSX.Element {
             onClose={() => setSelectedLead(null)}
             onSave={async (next) => {
               await updateLead(next)
+              setSelectedLead(null)
+            }}
+            onConvert={async ({ stage, amount }) => {
+              if (!selectedLead) return
+
+              await addOpportunity({
+                id: "",
+                name: selectedLead.name,
+                stage,
+                amount: typeof amount === "number" && Number.isFinite(amount) ? amount : undefined,
+                accountName: selectedLead.company,
+              })
+
+              await updateLead({ ...selectedLead, status: "qualified" })
+
+              emitOppsChanged()
+
               setSelectedLead(null)
             }}
           />

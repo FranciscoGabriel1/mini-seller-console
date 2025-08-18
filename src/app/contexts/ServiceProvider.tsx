@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useMemo } from "react"
 import { ServicesCtx } from "./services-context"
 import { realClock } from "../../lib/clock"
 import { simulatedLatency } from "../../lib/latency"
@@ -8,14 +8,17 @@ import { localStorageKV } from "../../lib/storage"
 import { memoryOppRepo } from "../../features/opportunities/memoryOppRepo"
 
 export const ServiceProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const clock = realClock()
-  const latency = simulatedLatency()
-  const services: Services = {
-    leads: jsonLeadRepo(latency),
-    opps: memoryOppRepo(clock),
-    kv: localStorageKV,
-    clock,
-    latency,
-  }
+  const services = useMemo<Services>(() => {
+    const clock = realClock()
+    const latency = simulatedLatency()
+    return {
+      leads: jsonLeadRepo(latency),
+      opps: memoryOppRepo(clock),
+      kv: localStorageKV,
+      clock,
+      latency,
+    }
+  }, [])
+
   return <ServicesCtx.Provider value={services}>{children}</ServicesCtx.Provider>
 }

@@ -1,5 +1,6 @@
 import { type JSX } from "react"
 import { LeadList } from "./components/LeadList"
+import { OpportunitiesTable } from "./components/OpportunitiesTable"
 
 export default function App(): JSX.Element {
   return (
@@ -9,7 +10,7 @@ export default function App(): JSX.Element {
           <h1 className="text-2xl font-semibold tracking-tight text-secondary">
             Mini Seller Console
           </h1>
-          <p className="text-sm text-grayMuted">Leads list — minimal rendering</p>
+          <p className="text-sm text-grayMuted">Leads list - minimal rendering</p>
         </div>
       </header>
 
@@ -22,7 +23,7 @@ export default function App(): JSX.Element {
         <section className="space-y-3">
           <h2 className="text-base font-semibold text-secondary">Opportunities</h2>
           <div className="rounded-xl border border-surface bg-white p-6 text-sm text-grayMuted">
-            Coming soon…
+            <OpportunitiesTable />
           </div>
         </section>
       </main>
