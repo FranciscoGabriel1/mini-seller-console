@@ -12,7 +12,6 @@ import { useOpportunities } from "../../features/opportunities/hooks/useOpportun
 import { emitOppsChanged } from "../../lib/eventBus"
 import { LeadListSkeleton } from "../LeadListSkeleton"
 
-
 export function LeadList(): JSX.Element {
   const { data, isLoading, errorMessage, updateLead, reload, dismissError } = useLeads()
   const { addOpportunity } = useOpportunities()
@@ -56,8 +55,6 @@ export function LeadList(): JSX.Element {
   }
 
   if (isLoading) return <LeadListSkeleton />
-
-  // if (errorMessage) return <div className="p-4 text-sm text-red-600">Error: {errorMessage}</div>
   if (data.length === 0) return <div className="p-4 text-sm text-gray-500">No leads found.</div>
 
   return (
@@ -84,7 +81,80 @@ export function LeadList(): JSX.Element {
         onToggleSortByScore={() => setSortDirection(d => (d === "desc" ? "asc" : "desc"))}
       />
 
-      <div className="mt-3 overflow-x-auto rounded-xl border bg-white">
+      {/* MOBILE (≤ sm): cards */}
+      <div className="sm:hidden space-y-2 mt-3">
+        {visibleLeads.map((lead) => {
+          const isEditing = editingId === lead.id
+          return (
+            <article
+              key={lead.id}
+              className="rounded-xl border border-surface bg-white p-3"
+            >
+              <header
+                className="flex items-start justify-between gap-3"
+                onClick={() => setSelectedLead(lead)}
+              >
+                <div>
+                  <div className="font-medium text-gray-900">{lead.name}</div>
+                  <div className="text-xs text-grayMuted">{lead.company}</div>
+                </div>
+                <StatusBadge value={lead.status} />
+              </header>
+
+              <div className="mt-3 flex items-center justify-between">
+                <span className="text-xs text-gray-600">Score</span>
+
+                {isEditing ? (
+                  <div className="flex items-center gap-2">
+                    <input
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      className="w-16 rounded border px-2 py-1 text-right outline-none focus:ring"
+                      value={draftScore}
+                      onChange={(e) =>
+                        setDraftScore(e.target.value.replace(/\D/g, "").slice(0, 3))
+                      }
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") void commitEdit(lead)
+                        if (e.key === "Escape") cancelEdit()
+                      }}
+                      aria-label="Edit score"
+                    />
+                    <button
+                      type="button"
+                      className="rounded bg-gray-900 px-2 py-1 text-xs text-white disabled:opacity-50"
+                      disabled={!isValidScore(Number(draftScore))}
+                      onClick={() => void commitEdit(lead)}
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      className="rounded border px-2 py-1 text-xs"
+                      onClick={cancelEdit}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    className="rounded border px-2 py-1 text-xs"
+                    onClick={() => beginEditScore(lead)}
+                    aria-label="Edit score"
+                    title="Edit score"
+                  >
+                    {lead.score}
+                  </button>
+                )}
+              </div>
+            </article>
+          )
+        })}
+      </div>
+
+      {/* DESKTOP (≥ sm): table */}
+      <div className="mt-3 overflow-x-auto rounded-xl border bg-white hidden sm:block">
         <table className="min-w-full text-left text-sm">
           <thead className="border-b bg-gray-50 text-gray-600">
             <tr>
@@ -196,7 +266,6 @@ export function LeadList(): JSX.Element {
           />
         ) : <span />}
       </SlideOver>
-
     </>
   )
 }

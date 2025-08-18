@@ -17,27 +17,48 @@ export function OpportunitiesTable(): JSX.Element {
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full text-left text-sm">
-        <thead className="border-b bg-gray-50 text-gray-600">
-          <tr>
-            <th className="px-4 py-3">Name</th>
-            <th className="px-4 py-3">Account</th>
-            <th className="px-4 py-3">Stage</th>
-            <th className="px-4 py-3 text-right">Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map(op => (
-            <tr key={op.id} className="border-b last:border-none">
-              <td className="px-4 py-3 font-medium text-gray-900">{op.name}</td>
-              <td className="px-4 py-3 text-gray-700">{op.accountName}</td>
-              <td className="px-4 py-3"><StageBadge value={op.stage} /></td>
-              <td className="px-4 py-3 text-right">{formatCurrency(op.amount)}</td>
+    <>
+      {/* MOBILE (≤ sm): cards */}
+      <div className="sm:hidden space-y-2">
+        {data.map(op => (
+          <article key={op.id} className="rounded-xl border border-surface bg-white p-3">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <div className="font-medium text-gray-900">{op.name}</div>
+                <div className="text-xs text-grayMuted">{op.accountName}</div>
+              </div>
+              <StageBadge value={op.stage} />
+            </div>
+            <div className="mt-2 text-right text-sm">
+              {formatCurrency(op.amount)}
+            </div>
+          </article>
+        ))}
+      </div>
+
+      {/* DESKTOP (≥ sm): tabela */}
+      <div className="hidden sm:block overflow-x-auto">
+        <table className="min-w-full text-left text-sm">
+          <thead className="border-b bg-gray-50 text-gray-600">
+            <tr>
+              <th className="px-4 py-3">Name</th>
+              <th className="px-4 py-3">Account</th>
+              <th className="px-4 py-3">Stage</th>
+              <th className="px-4 py-3 text-right">Amount</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {data.map(op => (
+              <tr key={op.id} className="border-b last:border-none">
+                <td className="px-4 py-3 font-medium text-gray-900">{op.name}</td>
+                <td className="px-4 py-3 text-gray-700">{op.accountName}</td>
+                <td className="px-4 py-3"><StageBadge value={op.stage} /></td>
+                <td className="px-4 py-3 text-right">{formatCurrency(op.amount)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   )
 }
