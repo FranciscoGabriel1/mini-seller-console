@@ -59,7 +59,8 @@ pnpm preview
 pnpm lint
 
 # run tests (no script alias by default)
-pnpm vitest
+npm run test
+# or pnpm vitest
 # or with UI
 pnpm vitest --ui
 

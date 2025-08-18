@@ -57,7 +57,6 @@ export function LeadList(): JSX.Element {
 
   if (isLoading) return <LeadListSkeleton />
 
-  // ⬇️ não bloqueia quando há erro (mostra banner, mas mantém a tabela)
   // if (errorMessage) return <div className="p-4 text-sm text-red-600">Error: {errorMessage}</div>
   if (data.length === 0) return <div className="p-4 text-sm text-gray-500">No leads found.</div>
 
