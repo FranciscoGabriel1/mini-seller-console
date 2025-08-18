@@ -8,15 +8,18 @@ import { LeadToolbar } from "../LeadToolbar"
 import { isValidScore } from "../../lib/validators"
 import { useOpportunities } from "../../features/opportunities/hooks/useOpportunities"
 import { emitOppsChanged } from "../../lib/eventBus"
+import { usePersistentState } from "../../hooks/usePersistentState"
 
 
 export function LeadList(): JSX.Element {
   const { data, isLoading, errorMessage, updateLead } = useLeads()
   const { addOpportunity } = useOpportunities()
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
-  const [searchQuery, setSearchQuery] = useState<string>("")
-  const [selectedStatus, setSelectedStatus] = useState<LeadStatus | undefined>(undefined)
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc")
+  const [searchQuery, setSearchQuery] = usePersistentState<string>("leads:search", "")
+  const [selectedStatus, setSelectedStatus] =
+    usePersistentState<LeadStatus | undefined>("leads:status", undefined)
+  const [sortDirection, setSortDirection] =
+    usePersistentState<"asc" | "desc">("leads:sortDirection", "desc")
   const [editingId, setEditingId] = useState<string | null>(null)
   const [draftScore, setDraftScore] = useState<string>("")
 

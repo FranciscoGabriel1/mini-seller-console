@@ -11,9 +11,10 @@ export const ServiceProvider: React.FC<React.PropsWithChildren> = ({ children })
   const services = useMemo<Services>(() => {
     const clock = realClock()
     const latency = simulatedLatency()
+    const kv = localStorageKV
     return {
       leads: jsonLeadRepo(latency),
-      opps: memoryOppRepo(clock),
+      opps: memoryOppRepo(clock, kv),
       kv: localStorageKV,
       clock,
       latency,
