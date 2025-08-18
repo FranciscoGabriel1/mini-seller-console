@@ -1,69 +1,66 @@
-# React + TypeScript + Vite
+# Mini Seller Console
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A lightweight React + Tailwind app to triage **Leads** and convert them into **Opportunities**.
 
-Currently, two official plugins are available:
+## Description
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This mini CRM lets you:
+- Load a local JSON list of **Leads**
+- **Search** (name/company), **filter** (status), and **sort** (score asc/desc)
+- Open a **slide-over detail panel** for inline edits (email with validation, status)
+- **Edit score inline** with optimistic updates and rollback on failure
+- **Convert Lead → Opportunity** (stage + optional amount) and view them in a table
+- Persist UI state (search/filter/sort) and opportunities via **localStorage**
+- Handle loading, empty and error states smoothly
 
-## Expanding the ESLint configuration
+**Tech stack:** React (Vite) · TypeScript · Tailwind CSS v4 · Vitest + React Testing Library · ESLint + Prettier
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Prerequisites
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+- **Node.js ≥ 20.x**
+- A package manager:
+  - **pnpm** (recommended) or **npm** / **yarn**
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+> Check your versions:
+```bash
+node -v
+pnpm -v    # or: npm -v / yarn -v
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Install
+```bash
+# clone the repo
+git clone https://github.com/FranciscoGabriel1/mini-seller-console.git
+cd mini-seller-console
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+# install deps (choose one)
+pnpm install
+# npm install
+# yarn install
+```
+## Run
+```bash
+pnpm dev
+# or: npm run dev
+# or: yarn dev
+```
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Other useful scripts
+```bash
+# build for production
+pnpm build
+
+# preview the production build locally
+pnpm preview
+
+# lint sources
+pnpm lint
+
+# run tests (no script alias by default)
+pnpm vitest
+# or with UI
+pnpm vitest --ui
+
 ```
