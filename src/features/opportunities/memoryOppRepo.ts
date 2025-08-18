@@ -1,23 +1,23 @@
 import type { Opportunity } from "./types"
 import type { Clock, KVStorage } from "../ports"
 
-const KEY = "opportunities:v1"
+const STORAGE_KEY = "opportunities:v1"
 
 export function memoryOppRepo(clock: Clock, kv?: KVStorage) {
-  // hydrate from KV if available
-  let store: Opportunity[] = Array.isArray(kv?.get<Opportunity[]>(KEY)) ? (kv!.get<Opportunity[]>(KEY) as Opportunity[]) : []
+  let store: Opportunity[] = Array.isArray(kv?.get<Opportunity[]>(STORAGE_KEY))
+    ? (kv!.get<Opportunity[]>(STORAGE_KEY) as Opportunity[])
+    : []
 
-  function persist() {
-    if (kv) kv.set<Opportunity[]>(KEY, store)
+  function persist(): void {
+    if (kv) kv.set<Opportunity[]>(STORAGE_KEY, store)
   }
 
   async function list(): Promise<Opportunity[]> {
-    // always reflect latest KV (in case other tabs wrote)
     if (kv) {
-      const latest = kv.get<Opportunity[]>(KEY)
+      const latest = kv.get<Opportunity[]>(STORAGE_KEY)
       if (Array.isArray(latest)) store = latest
     }
-    return Promise.resolve([...store])
+    return [...store]
   }
 
   async function add(next: Opportunity): Promise<Opportunity> {
@@ -25,7 +25,12 @@ export function memoryOppRepo(clock: Clock, kv?: KVStorage) {
     const created: Opportunity = { ...next, id }
     store = [...store, created]
     persist()
-    return Promise.resolve(created)
+    return created
+  }
+
+  async function remove(id: string): Promise<void> {
+    store = store.filter(op => op.id !== id)
+    persist()
   }
 
   function generateId(): string {
@@ -34,7 +39,7 @@ export function memoryOppRepo(clock: Clock, kv?: KVStorage) {
     return `opp_${ts}_${rnd}`
   }
 
-  return { list, add }
+  return { list, add, delete: remove }
 }
 
 export type MemoryOppRepo = ReturnType<typeof memoryOppRepo>

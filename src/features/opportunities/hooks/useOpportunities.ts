@@ -11,6 +11,7 @@ type UseOppsState = {
 
 type UseOppsReturn = UseOppsState & {
   addOpportunity: (next: Opportunity) => Promise<void>
+  deleteOpportunity: (id: string) => Promise<void> // 👈 novo
   reload: () => Promise<void>
   dismissError: () => void
 }
@@ -22,7 +23,11 @@ function getErrorMessage(error: unknown): string {
 
 export function useOpportunities(): UseOppsReturn {
   const { opps } = useServices()
-  const [state, setState] = useState<UseOppsState>({ data: [], isLoading: true, errorMessage: null })
+  const [state, setState] = useState<UseOppsState>({
+    data: [],
+    isLoading: true,
+    errorMessage: null,
+  })
 
   async function load(): Promise<void> {
     setState(s => ({ ...s, isLoading: true }))
@@ -37,6 +42,7 @@ export function useOpportunities(): UseOppsReturn {
   useEffect(() => { void load() }, [])
 
   useEffect(() => {
+    // reload quando oportunidades mudarem em outra parte da UI
     return onOppsChanged(() => { void load() })
   }, [])
 
@@ -53,5 +59,14 @@ export function useOpportunities(): UseOppsReturn {
     }
   }
 
-  return { ...state, addOpportunity, reload: load, dismissError }
+  async function deleteOpportunity(id: string): Promise<void> {
+    try {
+      await opps.delete(id)
+      setState(s => ({ ...s, data: s.data.filter(op => op.id !== id) }))
+    } catch (e: unknown) {
+      setState(s => ({ ...s, errorMessage: getErrorMessage(e) }))
+    }
+  }
+
+  return { ...state, addOpportunity, deleteOpportunity, reload: load, dismissError }
 }

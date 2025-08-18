@@ -9,6 +9,7 @@ export type LeadRepository = {
 export type OpportunityRepository = {
   add(next: Opportunity): Promise<Opportunity>
   list(): Promise<Opportunity[]>
+  delete(id: string): Promise<void>
 }
 
 export type KVStorage = {
