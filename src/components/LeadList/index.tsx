@@ -10,6 +10,7 @@ import { usePersistentState } from "../../hooks/usePersistentState"
 import { StatusBadge } from "../StatusBadge"
 import { useOpportunities } from "../../features/opportunities/hooks/useOpportunities"
 import { emitOppsChanged } from "../../lib/eventBus"
+import { LeadListSkeleton } from "../LeadListSkeleton"
 
 
 export function LeadList(): JSX.Element {
@@ -54,7 +55,8 @@ export function LeadList(): JSX.Element {
     setDraftScore("")
   }
 
-  if (isLoading) return <div className="p-4 text-sm text-gray-500">Loading leads…</div>
+  if (isLoading) return <LeadListSkeleton />
+
   // ⬇️ não bloqueia quando há erro (mostra banner, mas mantém a tabela)
   // if (errorMessage) return <div className="p-4 text-sm text-red-600">Error: {errorMessage}</div>
   if (data.length === 0) return <div className="p-4 text-sm text-gray-500">No leads found.</div>
