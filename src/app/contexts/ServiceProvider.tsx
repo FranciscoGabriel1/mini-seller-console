@@ -15,7 +15,7 @@ export const ServiceProvider: React.FC<React.PropsWithChildren> = ({ children })
     return {
       leads: jsonLeadRepo(latency),
       opps: memoryOppRepo(clock, kv),
-      kv: localStorageKV,
+      kv,
       clock,
       latency,
     }
